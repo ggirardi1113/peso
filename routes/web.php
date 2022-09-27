@@ -17,8 +17,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 */
+use App\Http\Controllers\peso;
 
+Route::get('/', [peso::class, 'informa']);
 
-Route::get('/peso', function () {
-    return 'peso';
-});
+Route::get('/peso', [peso::class, 'result']);
