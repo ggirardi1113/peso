@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ContatosController;
+use App\Http\Controllers\LivrosController;
 
 /*
 |--------------------------------------------------------------------------
@@ -11,14 +13,15 @@ use Illuminate\Support\Facades\Route;
 | routes are loaded by the RouteServiceProvider within a group which
 | contains the "web" middleware group. Now create something great!
 |
-
+*/
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('home');
 });
-*/
-use App\Http\Controllers\peso;
 
-Route::get('/', [peso::class, 'informa']);
 
-Route::get('/peso', [peso::class, 'result']);
+Route::get('contatos/buscar',[ContatosController::class,'buscar']);
+Route::resource('contatos',ContatosController::class);
+
+Route::get('livros/buscar',[LivrosController::class,'buscar']);
+Route::resource('livros',LivrosController::class);
