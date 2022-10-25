@@ -1,7 +1,7 @@
-@extends('layout.app')
+@extends('layouts.app')
 @section('title','Contato - '.$contato->nome)
 @section('content')
-    <div class="card w-50">
+    <div class="card w-50 m-auto">
         @php
             $nomeimagem = "";
             if(file_exists("./img/contatos/".md5($contato->id).".jpg")) {
@@ -33,14 +33,48 @@
                 Estado: {{$contato->estado}}</p>
         </div>
         <div class="card-footer">
-            {{Form::open(['route' => ['contatos.destroy',$contato->id],'method' => 'DELETE'])}}
-            @if ($nomeimagem !== "./img/contatos/semfoto.webp")
-               {{Form::hidden('foto',$nomeimagem)}}
+            @if ((Auth::check()) && (Auth::user()->isAdmin()))
+                {{Form::open(['route' => ['contatos.destroy',$contato->id],'method' => 'DELETE'])}}
+                @if ($nomeimagem !== "./img/contatos/semfoto.webp")
+                {{Form::hidden('foto',$nomeimagem)}}
+                @endif
+                <a href="{{url('contatos/'.$contato->id.'/edit')}}" class="btn btn-success">Alterar</a>
+                {{Form::submit('Excluir',['class'=>'btn btn-danger','onclick'=>'return confirm("Confirma exclusão?")'])}}
             @endif
-            <a href="{{url('contatos/'.$contato->id.'/edit')}}" class="btn btn-success">Alterar</a>
-            {{Form::submit('Excluir',['class'=>'btn btn-danger','onclick'=>'return confirm("Confirma exclusão?")'])}}
-            <a href="{{url('contatos/')}}" class="btn btn-secondary">Voltar</a>
-            {{Form::close()}}
+                <a href="{{url('contatos/')}}" class="btn btn-secondary">Voltar</a>
+            @if ((Auth::check()) && (Auth::user()->isAdmin()))
+                {{Form::close()}}
+            @endif
+
         </div>
     </div>
+    <br />
+    <div class="card w-70 m-auto">
+        <div class="card-header">
+            <h1>Empréstimos</h1>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped table-hover">
+                <tr>
+                    <th>Id</th>
+                    <th>Livro</th>
+                    <th>Data</th>
+                    <th>Devolução</th>
+                </tr>
+                @foreach ($contato->emprestimos as $emprestimo)
+                        <tr>
+                            <td>
+                                <a href="{{url('emprestimos/'.$emprestimo->id)}}">{{$emprestimo->id}}</a>
+                            </td>
+                            <td>
+                                {{$emprestimo->livro_id}} - {{$emprestimo->livro->titulo}}
+                            </td>
+                            <td>
+                                {{\Carbon\Carbon::create($emprestimo->datahora)->format('d/m/Y H:i:s')}}
+                            </td>
+                            <td>{!!$emprestimo->devolvido!!}</td>
+                        </tr>
+                    @endforeach
+            </table>
+        </div>
 @endsection
